@@ -174,3 +174,11 @@ struct HourMinutePicker: View {
         }
     }
 }
+
+// AI generated
+let numberFormatter: NumberFormatter = {
+    let f = NumberFormatter()
+    f.numberStyle = .decimal
+    f.maximumFractionDigits = 1
+    return f
+}()

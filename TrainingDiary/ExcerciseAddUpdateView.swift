@@ -11,10 +11,10 @@ struct ExcerciseAddUpdateView: View {
     
     @State var exercise: Exercise
     
-    // editable fields for creating new sets
+    // editable fields when creating default sets
     @State var setCount: Int = 0
     @State var repsCount: Int = 0
-    @State var weight: String = "0"
+    @State var weight: Double = 0.0
     @State var pause: Duration = .zero  // pause after a set
     @State var isWarmup: Bool = false   // true if warmup set
     
@@ -22,23 +22,23 @@ struct ExcerciseAddUpdateView: View {
         
         NavigationStack {
             ZStack {
-                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
-                    .opacity(0.8).ignoresSafeArea()
+//                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
+//                                    .opacity(0.8).ignoresSafeArea()
                 
                 VStack {
                     
                     HStack {
-                        Text("Create or edit an exercise.")
-                            .font(.title2)
-                        Spacer()
-                    }.padding(.bottom,5)
-
+                        Text("Create or edit an exercise")
+                            .font(.body)
+                    }.padding(.bottom,15)
+                    
                     
                     HStack {
                         Text("General settings")
-                            .font(.title3.bold())
+                            .font(.caption.bold())
                         Spacer()
                     }
+                    
                     GroupBox {
                         LabeledContent("Category") {
                             Picker("", selection: $exercise.category) {
@@ -61,11 +61,6 @@ struct ExcerciseAddUpdateView: View {
                                 HourMinutePicker(duration: $exercise.duration)
                             }
                         }
-                        
-//                        LabeledContent("Device") {
-//                            TextField("optional",text: $exercise.device)
-//                        }
-
                     }
                     .font(.headline)
                     
@@ -75,13 +70,13 @@ struct ExcerciseAddUpdateView: View {
                         HStack {
                             Text("Sets")
                                 .padding(.top,10)
-                                .font(.title3.bold())
+                                .font(.caption.bold())
                             Spacer()
                         }
                         
                         if exercise.sets.isEmpty {
                             // exercise has not sets,
-                            //  allow creating new sets with identical settings
+                            //  allow creating group of new sets with identical settings
                             GroupBox {
                                 
                                 LabeledContent("Number of sets:") {
@@ -91,10 +86,10 @@ struct ExcerciseAddUpdateView: View {
                                 LabeledContent("Weight:") {
                                     HStack {
                                         Spacer()
-                                        TextField("",text: $weight)
-                                            .keyboardType(.numberPad)
-                                            .border(Color.gray)
-                                            .frame(width: 50)
+                                        TextField("0.0", value: $weight, format: .number)
+                                              .textFieldStyle(.roundedBorder)
+                                              .keyboardType(.numberPad)
+                                              .frame(width: 80)
                                     }
                                 }
                                 LabeledContent("Reps:") {
@@ -105,7 +100,8 @@ struct ExcerciseAddUpdateView: View {
                                 }
                                 
                                 HStack {
-                                    Text("You can change settings for each set individually.").font(.caption)
+                                    Text("Above settings are applied when creating sets. You can adjust settings for each set individually.")
+                                        .font(.caption)
                                     Spacer()
                                 }
                                 
@@ -114,8 +110,8 @@ struct ExcerciseAddUpdateView: View {
                             Button(
                                 action: {
                                     for _ in 0..<setCount {
-                                        let w = Double(weight) ?? 0.0
-                                        let s = Set(weight: w)
+                                        let w = weight
+                                        let s = Set(weight: w, reps: repsCount, pause: pause)
                                         exercise.sets.append(s)
                                     }
                                 },
@@ -131,35 +127,46 @@ struct ExcerciseAddUpdateView: View {
                             // exercise has sets defined, show sets
                             ScrollView {
                                 ForEach(exercise.sets.indices, id: \.self) { index in
+                                    
+//                                    let _ = print(exercise.sets[index])
+                                    
                                     VStack(alignment: .leading) {
                                         GroupBox {
                                             HStack {
+                                                let wup = exercise.sets[index].isWarmup ? " (warm-up)" : ""
                                                 Text("Set \(index+1)").font(Font.title3.bold())
+                                                Text("\(wup)").font(.body.italic())
                                                 Spacer()
                                             }
+                                            
                                             if index == 0 {
-                                                LabeledContent("Warm-up set:") {
-                                                    Toggle("", isOn: $isWarmup)
+                                                LabeledContent("Warm-up:") {
+                                                    Toggle("", isOn: $exercise.sets[index].isWarmup)
                                                 }
                                             }
-                                        
+                                            
                                             LabeledContent("Reps:") {
-                                                Stepper("\(exercise.sets[index].reps)", value: $setCount, in: 0...10)
+                                                Stepper("\(exercise.sets[index].reps)", value: $exercise.sets[index].reps, in: 0...10)
                                             }
+                                            
                                             LabeledContent("Weight:") {
-                                                TextField("optional",text: $weight)
-                                                    .keyboardType(.numberPad)
+                                                TextField("0.0", value: $exercise.sets[index].weight, format: .number)
+                                                      .textFieldStyle(.roundedBorder)
+                                                      .keyboardType(.numberPad)
+                                                      .frame(width: 80)
                                             }
+                                            
                                             LabeledContent("Pause:") {
-                                                MinuteSecondPicker(duration: $pause)
+                                                MinuteSecondPicker(duration: $exercise.sets[index].pause)
                                             }
-                                        }
-                                    
+                                            
+                                        }.font(.headline)
+                                        
                                     }
                                 }
                                 
                             }
-                  
+                            
                             HStack {
                                 Button(
                                     action: {
@@ -167,6 +174,7 @@ struct ExcerciseAddUpdateView: View {
                                     },
                                     label: {
                                         Image(systemName: "plus.circle")
+                                            .font(.title)
                                     }).buttonStyle(.glass)
                                 Spacer()
                                 Button(
@@ -174,22 +182,14 @@ struct ExcerciseAddUpdateView: View {
                                         exercise.sets.removeLast()
                                     },
                                     label: {
-                                    Image(systemName: "minus.circle")
-                                    }).buttonStyle(.glass)
-                           
-                                Button(
-                                    action: {
-                                        exercise.sets.removeAll()
-                                    },
-                                    label: {
-                                        Text("Clear all")
+                                        Image(systemName: "minus.circle")
+                                            .font(.title)
                                     }).buttonStyle(.glass)
                             }
                         }
-      
                         
                     }
-                
+                    
                     Spacer()
                 }
                 .padding()
@@ -227,7 +227,7 @@ struct ExcerciseAddUpdateView: View {
                                 Text("Save").font(.title).padding()
                             })//.buttonStyle(.glassProminent)
                     }
-
+                    
                 } // VStack
                 .navigationTitle("Exercise")
                 .navigationBarTitleDisplayMode(.inline)

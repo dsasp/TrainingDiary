@@ -41,15 +41,19 @@ struct Set: Identifiable, Codable {
     var weight: Double
     var reps: Int
     var notes: String
+    var pause: Duration     // pause after set
     var isWarmup: Bool
+    var isCoolDown: Bool    // for future use
     
-    init(version: Int = setVersion, id: UUID = UUID(), weight: Double = 0, reps: Int = 1, notes: String = "", isWarmup: Bool = false) {
+    init(version: Int = setVersion, id: UUID = UUID(), weight: Double = 0, reps: Int = 1, notes: String = "", pause: Duration = .zero, isWarmup: Bool = false, isCoolDown: Bool = false) {
         self.version = version
         self.id = id
         self.weight = weight
         self.reps = reps
         self.notes = notes
+        self.pause = pause
         self.isWarmup = isWarmup
+        self.isCoolDown = isCoolDown
     }
 }
 
