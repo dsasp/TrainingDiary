@@ -10,8 +10,7 @@ import SwiftUI
 struct StartView: View {
     var body: some View {
         
-        let buttonHeight: CGFloat = 50
-        let buttonWidth: CGFloat = 55
+    
         
         NavigationStack {
             
