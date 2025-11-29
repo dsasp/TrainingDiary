@@ -25,8 +25,8 @@ struct ExcerciseAddUpdateView: View {
             ZStack {
                 //              Color.yellow.opacity(0.5).edgesIgnoringSafeArea(.all)
                 
-//                                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
-//                                                    .opacity(0.8).ignoresSafeArea()
+                //                                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
+                //                                                    .opacity(0.8).ignoresSafeArea()
                 
                 VStack(spacing: 10) {
                     
@@ -82,10 +82,14 @@ struct ExcerciseAddUpdateView: View {
                         
                         HStack {
                             Text("Sets")
-                                .padding(.top,10)
-                                .font(.caption.bold())
+                            
+                            if !exercise.sets.isEmpty {
+                                Text("(\(exercise.sets.count))")
+                            }
                             Spacer()
                         }
+                        .padding(.top,10)
+                        .font(.caption.bold())
                         
                         if exercise.sets.isEmpty {
                             // exercise has not sets,
@@ -191,112 +195,89 @@ struct ExcerciseAddUpdateView: View {
                                 
                             }
                             .listStyle(.plain)
-                            .ignoresSafeArea(edges: .bottom)
-                            
-                            //                            HStack {
-                            //                                Button(
-                            //                                    action: {
-                            //                                        exercise.sets.append(Set())
-                            //                                    },
-                            //                                    label: {
-                            //                                        Image(systemName: "plus.circle")
-                            //                                            .font(.title)
-                            //                                    }).buttonStyle(.glass)
-                            //                                Spacer()
-                            //                                Button(
-                            //                                    action: {
-                            //                                        exercise.sets.removeLast()
-                            //                                    },
-                            //                                    label: {
-                            //                                        Image(systemName: "minus.circle")
-                            //                                            .font(.title)
-                            //                                    })
-                            //                                .disabled(exercise.sets.count <= 1)
-                            //                                .buttonStyle(.glass)
-                            //                            }
-                            //                            Spacer()
+                            .padding(.bottom,50) // ensure last item not covered by bottomBar
                         }
-                        
                     }
-                    
-                    
+                }.padding()
+                
+            } // VStack
+            .navigationTitle("Exercise")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .onAppear {
+                if exercise.category != .gym {
+                    if exercise.duration == .zero {
+                        exercise.duration = .seconds(15*60+0)
+                    }
                 }
-                .padding()
-                .toolbar {
-                    ToolbarItemGroup(placement: .keyboard, content: {
-                        Spacer()
-                        // button to hide keyboard
-                        Button(action: { kbFocus=false },
-                               label: {Image(systemName: "keyboard.chevron.compact.down").font(.system(size: 15))
-                        })
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard, content: {
+                    Spacer()
+                    // button to hide keyboard
+                    Button(action: { kbFocus=false },
+                           label: {Image(systemName: "keyboard.chevron.compact.down").font(.system(size: 15))
                     })
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(
-                            action: {
-                                // TBD
-                                dismiss()
-                            },
-                            label: {
-                                Text(
-                                    "Cancel"
-                                )
-                            })
-                    }
+                })
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(
+                        action: {
+                            // TBD
+                            dismiss()
+                        },
+                        label: {
+                            Text(
+                                "Cancel"
+                            )
+                        })
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(
+                        action: {
+                            // TBD
+                            // remember to delete sets if cat is othe than .gym when saving
+                        },
+                        label: {
+                            Text(
+                                "Save"
+                            )
+                        })
+                    .buttonStyle(.glassProminent)
+                    .disabled(exercise.name.hasWhiteSpaceOnly())
+                }
+                
+                if !exercise.sets.isEmpty {
                     
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .bottomBar) {
                         Button(
                             action: {
-                                // TBD
-                                // remember to delete sets if cat is othe than .gym when saving
+                                exercise.sets.append(Set())
                             },
                             label: {
-                                Text(
-                                    "Save"
-                                )
+                                Image(systemName: "plus.circle")
+                                    .font(.title3)
                             })
                         .buttonStyle(.glassProminent)
-                        .disabled(exercise.name.hasWhiteSpaceOnly())
                     }
                     
-                    if !exercise.sets.isEmpty {
-                        
-                        ToolbarItem(placement: .bottomBar) {
-                            Button(
-                                action: {
-                                    exercise.sets.append(Set())
-                                },
-                                label: {
-                                    Image(systemName: "plus.circle")
-                                        .font(.title)
-                                })
-                        }
-                        
-                        ToolbarItem(placement: .bottomBar) {
-                            Button(
-                                action: {
-                                    exercise.sets.removeLast()
-                                },
-                                label: {
-                                    Image(systemName: "minus.circle")
-                                        .font(.title)
-                                })
-                            .disabled(exercise.sets.count <= 1)
-                        }
-                    }
-                } // VStack
-                .navigationTitle("Exercise")
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackButtonHidden()
-                .onAppear {
-                    if exercise.category != .gym {
-                        if exercise.duration == .zero {
-                            exercise.duration = .seconds(15*60+0)
-                        }
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(
+                            action: {
+                                exercise.sets.removeLast()
+                            },
+                            label: {
+                                Image(systemName: "minus.circle")
+                                    .font(.title3)
+                            })
+                        .buttonStyle(.glassProminent)
+                        .disabled(exercise.sets.count <= 1)
                     }
                 }
                 
             }
         } // ZStack
+        .ignoresSafeArea(.container, edges: .bottom) // show list content under bottomBar
         
     }
 }

@@ -7,11 +7,18 @@
 
 import SwiftUI
 
+
+
 @main
 struct TrainingDiaryApp: App {
+    
+    // Create Globals singelton.
+    @StateObject private var globals = Globals.shared
+    
     var body: some Scene {
         WindowGroup {
             StartView()
+                .environmentObject(globals)
         }
     }
 }

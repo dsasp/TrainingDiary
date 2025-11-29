@@ -8,5 +8,9 @@
 import Foundation
 
 
-let buttonHeight: CGFloat = 50
+let buttonHeight: CGFloat = 60
 let buttonWidth: CGFloat = 55
+
+
+// Exercises json file
+let exercisesFile = "Exercises.json"

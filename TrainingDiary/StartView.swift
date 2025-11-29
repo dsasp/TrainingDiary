@@ -9,11 +9,10 @@ import SwiftUI
 
 struct StartView: View {
     
+    @EnvironmentObject var globals: Globals
     @State var e: Exercise = Exercise(id: UUID(), name: "Test", description: "Test")
     
     var body: some View {
-        
-    
         
         NavigationStack {
             
@@ -22,8 +21,6 @@ struct StartView: View {
                 .opacity(0.8).ignoresSafeArea()
                 
                 VStack {
-                    
-
                     
                     Text("Training Diary")
                         .font(.largeTitle).fontWeight(.semibold)
@@ -47,103 +44,84 @@ struct StartView: View {
                         
                     }).buttonStyle(.glassProminent)
                     
-                    // for testing
-                    NavigationLink(destination: ExcerciseAddUpdateView(exercise:e)) {
-                        Text("Exercise")
-                            .font(.title).fontWeight(.semibold)
-                            .padding()
-                    }
-                    
-                    
                     Spacer()
                     
-                    Text("Trainings Diary")
-                        .font(.title)
-                        .padding()
-                        .glassEffect(.regular, in: .rect(cornerRadius: 20))
-                    
-                    HStack {
-                        Button(action: {},
-                               label: {
-                            VStack {
-                                Image(systemName: "person")
-                                    .font(Font.title.bold())
-                                Text("Profile").font(.caption)
-                            }.frame(width: 80, height: 60)
-                        }).buttonStyle(GlassButtonStyle())
-                        Button(action: {},
-                               label: {
-                            VStack {
-                                Image(systemName: "figure.strengthtraining.traditional")
-                                    .font(Font.title.bold())
-                                Text("Plan").font(.caption)
-                            }.frame(width: 80, height: 60)
-                        }).glassEffect()
-                        Button(action: {},
-                               label: {
-                            VStack {
-                                Image(systemName: "calendar")
-                                    .font(Font.largeTitle.bold())
-                                Text("Workouts").font(.caption)
-                            }.frame(width: 80, height: 60)
-                        }).glassEffect()
-                        
-                        
-                    }
-                    
-                    GlassEffectContainer() {
-                        HStack {
-                            Button("Button1") {
-                                //
-                            }.buttonStyle(GlassButtonStyle())
-                            Button("Button2") {
-                                //
-                            }.buttonStyle(GlassButtonStyle())
-                            Button("Button3") {
-                                //
-                            }.buttonStyle(GlassButtonStyle())
-                        }
-                    }
-                    .padding()
-                    .glassEffect(.regular.tint(.yellow))
-                    
+//                    Text("Trainings Diary")
+//                        .font(.title)
+//                        .padding()
+//                        .glassEffect(.regular, in: .rect(cornerRadius: 20))
+//                    
+//                    HStack {
+//                        Button(action: {},
+//                               label: {
+//                            VStack {
+//                                Image(systemName: "person")
+//                                    .font(Font.title.bold())
+//                                Text("Profile").font(.caption)
+//                            }.frame(width: 80, height: 60)
+//                        }).buttonStyle(GlassButtonStyle())
+//                        Button(action: {},
+//                               label: {
+//                            VStack {
+//                                Image(systemName: "figure.strengthtraining.traditional")
+//                                    .font(Font.title.bold())
+//                                Text("Plan").font(.caption)
+//                            }.frame(width: 80, height: 60)
+//                        }).glassEffect()
+//                        Button(action: {},
+//                               label: {
+//                            VStack {
+//                                Image(systemName: "calendar")
+//                                    .font(Font.largeTitle.bold())
+//                                Text("Workouts").font(.caption)
+//                            }.frame(width: 80, height: 60)
+//                        }).glassEffect()
+//                    }
+//                    
+//                    GlassEffectContainer() {
+//                        HStack {
+//                            Button("Button1") {
+//                                //
+//                            }.buttonStyle(GlassButtonStyle())
+//                            Button("Button2") {
+//                                //
+//                            }.buttonStyle(GlassButtonStyle())
+//                            Button("Button3") {
+//                                //
+//                            }.buttonStyle(GlassButtonStyle())
+//                        }
+//                    }
+//                    .padding()
+//                    .glassEffect(.regular.tint(.yellow))
+//                    
                     
                     Spacer()
                 }
                 .padding()
                 .toolbar {
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {},
-                               label: {
-                            VStack {
-                                Image(systemName: "questionmark")
-                                    .font(Font.headline)
-                            }
-                        }).buttonStyle(GlassButtonStyle())
-                        
-                    }
-                    
                     ToolbarItem(placement: .bottomBar) {
-                        Button(action: {},
-                               label: {
-                            VStack {
-                                Image(systemName: "person")
-                                    .font(Font.title.bold())
-                                Text("Profile").font(.caption)
-                            }//.frame(width: buttonWidth, height: buttonHeight)
-                        }).buttonStyle(.glass)
-                    }
-                    
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(action: {},
-                               label: {
+                        NavigationLink(destination: ExcerciseAddUpdateView(exercise:e), label: {
                             VStack {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(Font.title.bold())
+                                Text("Exercises").font(.caption)
+                            }
+                        })
+                        .padding()
+                        .glassEffect()
+                    }
+                    
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(action: {},
+                               label: {
+                            VStack {
+                                Image(systemName: "calendar")
+                                    .font(Font.title.bold())
                                 Text("Plans").font(.caption)
                             }
-                        }).buttonStyle(GlassButtonStyle())
+                        })
+                        .padding()
+                        .glassEffect()
                     }
                     
                     ToolbarItem(placement: .bottomBar) {
@@ -155,26 +133,20 @@ struct StartView: View {
                                     Image(
                                         systemName: "chart.bar.xaxis"
                                     )
-                                    .font(
-                                        Font.largeTitle.bold()
-                                    )
-                                    Text(
-                                        "Statistics"
-                                    ).font(
-                                        .caption
-                                    )
-                            }.frame(width: buttonWidth, height: buttonHeight)
-                        }).glassEffect()
+                                    .font(Font.title.bold())
+                                    Text("Logs").font(.caption)
+                            }
+                        })
+                        .padding()
+                        .glassEffect()
                     }
                     
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {},
                                label: {
                             VStack {
                                 Image(systemName: "gear")
-                                    .font(Font.largeTitle.bold())
-                                Text("Settings").font(.caption)
-                            }.frame(width: buttonWidth, height: buttonHeight)
+                            }
                         }).buttonStyle(GlassButtonStyle())
                         
                     }
