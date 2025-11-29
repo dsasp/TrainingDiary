@@ -8,30 +8,27 @@
 import SwiftUI
 
 struct ExcerciseAddUpdateView: View {
+    @Environment(\.dismiss) private var dismiss
     
     @State var exercise: Exercise
+    @FocusState private var kbFocus: Bool
     
-    // editable fields when creating default sets
+    // editable fields for creating default sets
     @State var setCount: Int = 0
     @State var repsCount: Int = 0
     @State var weight: Double = 0.0
     @State var pause: Duration = .zero  // pause after a set
-    @State var isWarmup: Bool = false   // true if warmup set
     
     var body: some View {
         
         NavigationStack {
             ZStack {
-//                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
-//                                    .opacity(0.8).ignoresSafeArea()
+                //              Color.yellow.opacity(0.5).edgesIgnoringSafeArea(.all)
                 
-                VStack {
-                    
-                    HStack {
-                        Text("Create or edit an exercise")
-                            .font(.body)
-                    }.padding(.bottom,15)
-                    
+//                                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
+//                                                    .opacity(0.8).ignoresSafeArea()
+                
+                VStack(spacing: 10) {
                     
                     HStack {
                         Text("General settings")
@@ -39,30 +36,46 @@ struct ExcerciseAddUpdateView: View {
                         Spacer()
                     }
                     
-                    GroupBox {
-                        LabeledContent("Category") {
+                    GlassEffectContainer {
+                        
+                        LabeledContent("Name:") {
+                            TextField("enter name",text: $exercise.name)
+                                .font(.title.bold())
+                                .textFieldStyle(.roundedBorder)
+                                .focused($kbFocus)
+                                .padding()
+                        }
+                        
+                        LabeledContent("Category:") {
                             Picker("", selection: $exercise.category) {
                                 ForEach(ExerciseCategory.allCases, id: \.self) { category in
                                     Label(category.displayName, systemImage: category.iconName)
                                         .tag(category)
                                 }
-                            }.pickerStyle(.menu)
-                        }
-                        LabeledContent("Name") {
-                            TextField("name is required",text: $exercise.name)
+                            }
+                            .pickerStyle(.menu)
+                            .padding()
                         }
                         
-                        LabeledContent("Description") {
+                        LabeledContent("Description:") {
                             TextField("optional",text: $exercise.description)
+                                .textFieldStyle(.roundedBorder)
+                                .focused($kbFocus)
+                                .padding()
                         }
                         
                         if exercise.category != .gym {
                             LabeledContent("Duration") {
                                 HourMinutePicker(duration: $exercise.duration)
+                                    .padding()
                             }
+                            Spacer()
                         }
                     }
                     .font(.headline)
+                    .padding(.leading, 10)
+                    .glassEffect(.regular,in: .rect(cornerRadius: 20.0))
+                    
                     
                     // Show sets for category .gym only
                     if exercise.category == .gym {
@@ -77,35 +90,46 @@ struct ExcerciseAddUpdateView: View {
                         if exercise.sets.isEmpty {
                             // exercise has not sets,
                             //  allow creating group of new sets with identical settings
-                            GroupBox {
+                            GlassEffectContainer {
                                 
                                 LabeledContent("Number of sets:") {
                                     Stepper("\(setCount)", value: $setCount, in: 0...10)
+                                        .font(.title2.bold())
+                                        .padding()
                                 }
-                                
+                                LabeledContent("Reps:") {
+                                    Stepper("\(repsCount)", value: $repsCount, in: 0...10)
+                                        .font(.title2.bold())
+                                        .padding()
+                                }
                                 LabeledContent("Weight:") {
                                     HStack {
                                         Spacer()
                                         TextField("0.0", value: $weight, format: .number)
-                                              .textFieldStyle(.roundedBorder)
-                                              .keyboardType(.numberPad)
-                                              .frame(width: 80)
+                                            .textFieldStyle(.roundedBorder)
+                                            .font(.title2.bold())
+                                            .keyboardType(.numberPad)
+                                            .focused($kbFocus)
+                                            .frame(width: 80)
+                                            .padding(.trailing)
                                     }
                                 }
-                                LabeledContent("Reps:") {
-                                    Stepper("\(repsCount)", value: $repsCount, in: 0...10)
-                                }
+                                
                                 LabeledContent("Pause:") {
                                     MinuteSecondPicker(duration: $pause)
+                                        .padding()
                                 }
                                 
-                                HStack {
-                                    Text("Above settings are applied when creating sets. You can adjust settings for each set individually.")
-                                        .font(.caption)
-                                    Spacer()
-                                }
+                                Text("Above settings are applied when creating sets. You can adjust settings for each set individually.")
+                                    .font(.caption)
+                                    .padding(.bottom, 10)
                                 
-                            }.font(.headline)
+                                
+                                
+                            }
+                            .font(.headline)
+                            .padding(.leading, 10)
+                            .glassEffect(.regular,in: .rect(cornerRadius: 20.0))
                             
                             Button(
                                 action: {
@@ -122,20 +146,20 @@ struct ExcerciseAddUpdateView: View {
                                 })
                             .buttonStyle(.glass)
                             .disabled(setCount == 0)
+                            Spacer()
                             
                         } else {
                             // exercise has sets defined, show sets
-                            ScrollView {
+                            List {
+                                
                                 ForEach(exercise.sets.indices, id: \.self) { index in
-                                    
-//                                    let _ = print(exercise.sets[index])
                                     
                                     VStack(alignment: .leading) {
                                         GroupBox {
                                             HStack {
                                                 let wup = exercise.sets[index].isWarmup ? " (warm-up)" : ""
                                                 Text("Set \(index+1)").font(Font.title3.bold())
-                                                Text("\(wup)").font(.body.italic())
+                                                Text("\(wup)").font(.body)
                                                 Spacer()
                                             }
                                             
@@ -151,9 +175,9 @@ struct ExcerciseAddUpdateView: View {
                                             
                                             LabeledContent("Weight:") {
                                                 TextField("0.0", value: $exercise.sets[index].weight, format: .number)
-                                                      .textFieldStyle(.roundedBorder)
-                                                      .keyboardType(.numberPad)
-                                                      .frame(width: 80)
+                                                    .textFieldStyle(.roundedBorder)
+                                                    .keyboardType(.numberPad)
+                                                    .frame(width: 80)
                                             }
                                             
                                             LabeledContent("Pause:") {
@@ -166,38 +190,51 @@ struct ExcerciseAddUpdateView: View {
                                 }
                                 
                             }
+                            .listStyle(.plain)
+                            .ignoresSafeArea(edges: .bottom)
                             
-                            HStack {
-                                Button(
-                                    action: {
-                                        exercise.sets.append(Set())
-                                    },
-                                    label: {
-                                        Image(systemName: "plus.circle")
-                                            .font(.title)
-                                    }).buttonStyle(.glass)
-                                Spacer()
-                                Button(
-                                    action: {
-                                        exercise.sets.removeLast()
-                                    },
-                                    label: {
-                                        Image(systemName: "minus.circle")
-                                            .font(.title)
-                                    }).buttonStyle(.glass)
-                            }
+                            //                            HStack {
+                            //                                Button(
+                            //                                    action: {
+                            //                                        exercise.sets.append(Set())
+                            //                                    },
+                            //                                    label: {
+                            //                                        Image(systemName: "plus.circle")
+                            //                                            .font(.title)
+                            //                                    }).buttonStyle(.glass)
+                            //                                Spacer()
+                            //                                Button(
+                            //                                    action: {
+                            //                                        exercise.sets.removeLast()
+                            //                                    },
+                            //                                    label: {
+                            //                                        Image(systemName: "minus.circle")
+                            //                                            .font(.title)
+                            //                                    })
+                            //                                .disabled(exercise.sets.count <= 1)
+                            //                                .buttonStyle(.glass)
+                            //                            }
+                            //                            Spacer()
                         }
                         
                     }
                     
-                    Spacer()
+                    
                 }
                 .padding()
                 .toolbar {
+                    ToolbarItemGroup(placement: .keyboard, content: {
+                        Spacer()
+                        // button to hide keyboard
+                        Button(action: { kbFocus=false },
+                               label: {Image(systemName: "keyboard.chevron.compact.down").font(.system(size: 15))
+                        })
+                    })
                     ToolbarItem(placement: .topBarLeading) {
                         Button(
                             action: {
                                 // TBD
+                                dismiss()
                             },
                             label: {
                                 Text(
@@ -210,27 +247,46 @@ struct ExcerciseAddUpdateView: View {
                         Button(
                             action: {
                                 // TBD
+                                // remember to delete sets if cat is othe than .gym when saving
                             },
                             label: {
                                 Text(
                                     "Save"
                                 )
                             })
+                        .buttonStyle(.glassProminent)
+                        .disabled(exercise.name.hasWhiteSpaceOnly())
                     }
                     
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(
-                            action: {
-                                // TBD
-                            },
-                            label: {
-                                Text("Save").font(.title).padding()
-                            })//.buttonStyle(.glassProminent)
+                    if !exercise.sets.isEmpty {
+                        
+                        ToolbarItem(placement: .bottomBar) {
+                            Button(
+                                action: {
+                                    exercise.sets.append(Set())
+                                },
+                                label: {
+                                    Image(systemName: "plus.circle")
+                                        .font(.title)
+                                })
+                        }
+                        
+                        ToolbarItem(placement: .bottomBar) {
+                            Button(
+                                action: {
+                                    exercise.sets.removeLast()
+                                },
+                                label: {
+                                    Image(systemName: "minus.circle")
+                                        .font(.title)
+                                })
+                            .disabled(exercise.sets.count <= 1)
+                        }
                     }
-                    
                 } // VStack
                 .navigationTitle("Exercise")
                 .navigationBarTitleDisplayMode(.inline)
+                .navigationBarBackButtonHidden()
                 .onAppear {
                     if exercise.category != .gym {
                         if exercise.duration == .zero {

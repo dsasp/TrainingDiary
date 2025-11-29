@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct StartView: View {
+    
+    @State var e: Exercise = Exercise(id: UUID(), name: "Test", description: "Test")
+    
     var body: some View {
         
     
@@ -15,24 +18,19 @@ struct StartView: View {
         NavigationStack {
             
             ZStack {
-//                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
-//                .opacity(0.8).ignoresSafeArea()
+                LinearGradient(colors: [Color.red,Color.yellow],startPoint: .top,endPoint:.bottom)
+                .opacity(0.8).ignoresSafeArea()
                 
                 VStack {
                     
-                    Spacer()
+
                     
+                    Text("Training Diary")
+                        .font(.largeTitle).fontWeight(.semibold)
                     
-                    GlassEffectContainer {
-                        Text("Training Diary")
-                        
-                            .padding(.all)
-                           
-                    }
-                    .glassEffect(.regular, in: .rect(cornerRadius: 30))
-                    .padding()
+                        .padding()
                     
-                    Text("Create training plans and track your personal workouts.")
+                    Text("Create training plans, excercises and track your personal workouts.")
                         .font(.title2).fontWeight(.semibold)
                         .multilineTextAlignment(.center)
                         .padding(.leading, 20).padding(.trailing, 20).padding(.bottom, 30)
@@ -48,6 +46,13 @@ struct StartView: View {
                             .padding()
                         
                     }).buttonStyle(.glassProminent)
+                    
+                    // for testing
+                    NavigationLink(destination: ExcerciseAddUpdateView(exercise:e)) {
+                        Text("Exercise")
+                            .font(.title).fontWeight(.semibold)
+                            .padding()
+                    }
                     
                     
                     Spacer()

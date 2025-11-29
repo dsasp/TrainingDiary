@@ -38,6 +38,7 @@ struct MinuteSecondPicker: View {
                     Text("\(m) min").tag(m)
                 }
             }
+            .font(.title2.bold())
             .frame(maxWidth: .infinity)
             .clipped()
             
@@ -174,6 +175,15 @@ struct HourMinutePicker: View {
         }
     }
 }
+
+extension String {
+    /// Extension to string, test if string has whitespaces and newlines only.
+    /// - Returns: true if whitespaces/newlines only, false otherwise.
+    func hasWhiteSpaceOnly() -> Bool {
+        return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+}
+
 
 // AI generated
 let numberFormatter: NumberFormatter = {

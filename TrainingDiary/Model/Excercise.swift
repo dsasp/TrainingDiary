@@ -13,24 +13,50 @@ let setVersion: Int = 1
 enum ExerciseCategory: Int, Codable {
     case gym
     case cardio
+    case stretching
     case warmup
-    case running
-    case hiking
-    case cycling
-    case stetching
-    case swimming
+//    case running
+//    case hiking
+//    case cycling
+//    case swimming
     var id: Self { self }
+}
+
+enum MuscleGroup: String, Codable {
+    case chest
+    case shoulders
+    case arms
+    case triceps
+    case biceps
+    case back
+    case legs
+    case core
+}
+extension MuscleGroup {
+    var displayName: String {
+        switch self {
+        case .back: return "Back"
+        case .arms: return "Arms"
+        case .chest: return "Chest"
+        case .legs: return "Legs"
+        case .shoulders: return "Shoulders"
+        case .triceps: return "Triceps"
+        case .biceps: return "Biceps"
+        case .core: return "Core"
+        }
+    }
 }
 
 enum ExcerciseCategoryIcon: String, Codable {
     case gym = "figure.strengthtraining.traditional"
     case cardio = "heart"
-    case running = "figure.run"
-    case hiking = "figure.hiking"
-    case cycling = "figure.outdoor.cycle"
     case stetching = "figure.strengthtraining.functional"
-    case swimming = "figure.pool.swim"
     case warmup = "flame"
+//    case running = "figure.run"
+//    case hiking = "figure.hiking"
+//    case cycling = "figure.outdoor.cycle"
+//    case swimming = "figure.pool.swim"
+    
     var id: Self { self }
 }
 
@@ -73,8 +99,9 @@ struct Exercise: Identifiable, Codable {
     var end: Date                   // actual exercise end time
     var sets: [Set]                 // sets in excercise
     var duration: Duration          // planned duration, applicable to some categories like .warmup, .running, ...
+    var muscleGroups: [MuscleGroup] // muscle groups
   
-    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, icon: ExcerciseCategoryIcon = .gym ,image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60)) {
+    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, icon: ExcerciseCategoryIcon = .gym ,image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60), muscleGroups: [MuscleGroup] = []) {
         self.version = version
         self.id = id
         self.name = name
@@ -88,6 +115,7 @@ struct Exercise: Identifiable, Codable {
         self.end = end
         self.sets = sets
         self.duration = duration
+        self.muscleGroups = muscleGroups
     }
     
     mutating func startExcercise() {
@@ -106,12 +134,13 @@ extension ExerciseCategory {
         switch self {
         case .gym: return "Gym"
         case .cardio: return "Cardio"
-        case .running: return "Running"
-        case .hiking: return "Hiking"
-        case .cycling: return "Cycling"
-        case .stetching: return "Stretching"
-        case .swimming: return "Swimming"
+        case .stretching: return "Stretching"
         case .warmup: return "Warmup"
+//        case .running: return "Running"
+//        case .hiking: return "Hiking"
+//        case .cycling: return "Cycling"
+//        case .swimming: return "Swimming"
+       
         }
     }
 
@@ -119,12 +148,15 @@ extension ExerciseCategory {
         switch self {
         case .gym: return ExcerciseCategoryIcon.gym.rawValue
         case .cardio: return ExcerciseCategoryIcon.cardio.rawValue
-        case .running: return ExcerciseCategoryIcon.running.rawValue
-        case .hiking: return ExcerciseCategoryIcon.hiking.rawValue
-        case .cycling: return ExcerciseCategoryIcon.cycling.rawValue
-        case .stetching: return ExcerciseCategoryIcon.stetching.rawValue
-        case .swimming: return ExcerciseCategoryIcon.swimming.rawValue
+        case .stretching: return ExcerciseCategoryIcon.stetching.rawValue
         case .warmup: return ExcerciseCategoryIcon.warmup.rawValue
+//        case .running: return ExcerciseCategoryIcon.running.rawValue
+//        case .hiking: return ExcerciseCategoryIcon.hiking.rawValue
+//        case .cycling: return ExcerciseCategoryIcon.cycling.rawValue
+//        case .swimming: return ExcerciseCategoryIcon.swimming.rawValue
+        
         }
     }
 }
+
+
