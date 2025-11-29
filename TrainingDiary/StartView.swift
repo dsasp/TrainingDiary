@@ -17,14 +17,14 @@ struct StartView: View {
         NavigationStack {
             
             ZStack {
-                LinearGradient(colors: [Color.red,Color.yellow],startPoint: .top,endPoint:.bottom)
-                .opacity(0.8).ignoresSafeArea()
+                
+                appBackground
+                    .opacity(0.8).ignoresSafeArea()
                 
                 VStack {
                     
                     Text("Training Diary")
                         .font(.largeTitle).fontWeight(.semibold)
-                    
                         .padding()
                     
                     Text("Create training plans, excercises and track your personal workouts.")
@@ -104,43 +104,34 @@ struct StartView: View {
                             VStack {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(Font.title.bold())
-                                Text("Exercises").font(.caption)
+                                Text("Exercises").font(Font.caption.bold())
                             }
                         })
                         .padding()
                         .glassEffect()
                     }
-                    
                     ToolbarItem(placement: .bottomBar) {
-                        Button(action: {},
-                               label: {
+                        NavigationLink(destination: TrainingsView(), label: {
+                            VStack {
+                                Image(systemName: "folder.fill")
+                                    .font(Font.title.bold())
+                                Text("Trainings").font(Font.caption.bold())
+                            }
+                        })
+                        .padding()
+                        .glassEffect()
+                    }
+                    ToolbarItem(placement: .bottomBar) {
+                        NavigationLink(destination: WorkoutsView(), label: {
                             VStack {
                                 Image(systemName: "calendar")
                                     .font(Font.title.bold())
-                                Text("Plans").font(.caption)
+                                Text("Workouts").font(Font.caption.bold())
                             }
                         })
                         .padding()
                         .glassEffect()
                     }
-                    
-                    ToolbarItem(placement: .bottomBar) {
-                        Button(
-                            action: {
-                            },
-                            label: {
-                                VStack {
-                                    Image(
-                                        systemName: "chart.bar.xaxis"
-                                    )
-                                    .font(Font.title.bold())
-                                    Text("Logs").font(.caption)
-                            }
-                        })
-                        .padding()
-                        .glassEffect()
-                    }
-                    
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {},
                                label: {

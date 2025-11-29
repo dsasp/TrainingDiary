@@ -22,13 +22,9 @@ class Globals: ObservableObject {
         globLog.notice("init(): globals instantiated")
     }
     
-    
-    // Global list of exercises, stored as .json file
+    // Global list of exercises, persistemt in .json file
     @Published var exerciseList: [Exercise] = {
-        
-        //   Try loading current version of Parcours3D, if this fails, try to load previous
-        //   version to handle migration scenarios.
-        globLog.notice("Try loading exercise data, format version=\(exerciseVersion)")
+        globLog.notice("Try loading exercises, format version=\(exerciseVersion)")
         if let eList:[Exercise] = loadFromAppSupportDir(exercisesFile) { // func return nil on failure
             
             if eList.count>0 {
@@ -38,7 +34,23 @@ class Globals: ObservableObject {
             
         } else {
             // failed to load exercise data, retries or migration code would go here
-            globLog.error("Failed to load exercise data")
+            globLog.error("Failed loading exercises")
+            return[]
+        }}()
+    
+    // Global list of workouts, persistemt in .json file
+    @Published var workoutList: [Workout] = {
+        globLog.notice("Try loading workouts, format version=\(workoutVersion)")
+        if let wList:[Workout] = loadFromAppSupportDir(workoutsFile) { // func return nil on failure
+            
+            if wList.count>0 {
+                globLog.notice("Found \(wList.count) workouts, version=\(wList[0].version)")
+            }
+            return wList
+            
+        } else {
+            // failed to load workouts, retries or migration code would go here
+            globLog.error("Failed loading workouts")
             return[]
         }}()
 }

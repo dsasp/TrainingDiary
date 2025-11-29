@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import SwiftUI
 
 
 let buttonHeight: CGFloat = 60
 let buttonWidth: CGFloat = 55
 
+// Common app background
+let appBackground = LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
+   
 
-// Exercises json file
-let exercisesFile = "Exercises.json"
+//let appBackground = Color.yellow.opacity(0.5).edgesIgnoringSafeArea(.all)

@@ -10,6 +10,11 @@ import Foundation
 let exerciseVersion: Int = 1
 let setVersion: Int = 1
 
+// Exercises json file
+let exercisesFile = "Exercises.json"
+// Excercise icon name
+let imageExercise = "figure.strengthtraining.traditional"
+
 enum ExerciseCategory: Int, Codable {
     case gym
     case cardio
@@ -23,14 +28,13 @@ enum ExerciseCategory: Int, Codable {
 }
 
 enum MuscleGroup: String, Codable {
-    case chest
-    case shoulders
-    case arms
-    case triceps
-    case biceps
-    case back
-    case legs
-    case core
+    case chest      // Brust
+    case shoulders  // Schulter
+    case arms       // Arme
+    case back       // Rücken
+    case legs       // Beine
+    case core       // Rumpf
+    case body       // Ganzkörper
 }
 extension MuscleGroup {
     var displayName: String {
@@ -40,9 +44,8 @@ extension MuscleGroup {
         case .chest: return "Chest"
         case .legs: return "Legs"
         case .shoulders: return "Shoulders"
-        case .triceps: return "Triceps"
-        case .biceps: return "Biceps"
         case .core: return "Core"
+        case .body: return "Body"
         }
     }
 }
@@ -52,6 +55,7 @@ enum ExcerciseCategoryIcon: String, Codable {
     case cardio = "heart"
     case stetching = "figure.strengthtraining.functional"
     case warmup = "flame"
+    case cooldown = "showflake"
 //    case running = "figure.run"
 //    case hiking = "figure.hiking"
 //    case cycling = "figure.outdoor.cycle"

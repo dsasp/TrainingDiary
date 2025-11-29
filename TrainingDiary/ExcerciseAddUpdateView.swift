@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct ExcerciseAddUpdateView: View {
+    
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var globals: Globals
+    @FocusState private var kbFocus: Bool
     
     @State var exercise: Exercise
-    @FocusState private var kbFocus: Bool
     
     // editable fields for creating default sets
     @State var setCount: Int = 0
@@ -23,10 +25,9 @@ struct ExcerciseAddUpdateView: View {
         
         NavigationStack {
             ZStack {
-                //              Color.yellow.opacity(0.5).edgesIgnoringSafeArea(.all)
                 
-                //                                                LinearGradient(colors: [Color.red,Color.green],startPoint: .top,endPoint:.bottom)
-                //                                                    .opacity(0.8).ignoresSafeArea()
+                appBackground
+                    .opacity(0.8).ignoresSafeArea()
                 
                 VStack(spacing: 10) {
                     
@@ -144,9 +145,7 @@ struct ExcerciseAddUpdateView: View {
                                     }
                                 },
                                 label: {
-                                    Text(
-                                        "Create sets"
-                                    )
+                                    Text("Create sets").fontWeight(.bold)
                                 })
                             .buttonStyle(.glass)
                             .disabled(setCount == 0)
@@ -203,7 +202,7 @@ struct ExcerciseAddUpdateView: View {
             } // VStack
             .navigationTitle("Exercise")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden()
+//            .navigationBarBackButtonHidden()
             .onAppear {
                 if exercise.category != .gym {
                     if exercise.duration == .zero {
@@ -216,21 +215,19 @@ struct ExcerciseAddUpdateView: View {
                     Spacer()
                     // button to hide keyboard
                     Button(action: { kbFocus=false },
-                           label: {Image(systemName: "keyboard.chevron.compact.down").font(.system(size: 15))
+                           label: {Image(systemName: "keyboard.chevron.compact.down")
                     })
                 })
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(
-                        action: {
-                            // TBD
-                            dismiss()
-                        },
-                        label: {
-                            Text(
-                                "Cancel"
-                            )
-                        })
-                }
+//                ToolbarItem(placement: .topBarLeading) {
+//                    Button(
+//                        action: {
+//                            // TBD
+//                            dismiss()
+//                        },
+//                        label: {
+//                            Text("Cancel").fontWeight(.bold)
+//                        })
+//                }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(
@@ -239,9 +236,7 @@ struct ExcerciseAddUpdateView: View {
                             // remember to delete sets if cat is othe than .gym when saving
                         },
                         label: {
-                            Text(
-                                "Save"
-                            )
+                            Text("Save").fontWeight(.bold)
                         })
                     .buttonStyle(.glassProminent)
                     .disabled(exercise.name.hasWhiteSpaceOnly())
@@ -256,7 +251,7 @@ struct ExcerciseAddUpdateView: View {
                             },
                             label: {
                                 Image(systemName: "plus.circle")
-                                    .font(.title3)
+                                    .font(.title3).fontWeight(.bold)
                             })
                         .buttonStyle(.glassProminent)
                     }
@@ -268,7 +263,7 @@ struct ExcerciseAddUpdateView: View {
                             },
                             label: {
                                 Image(systemName: "minus.circle")
-                                    .font(.title3)
+                                    .font(.title3).fontWeight(.bold)
                             })
                         .buttonStyle(.glassProminent)
                         .disabled(exercise.sets.count <= 1)
@@ -285,4 +280,5 @@ struct ExcerciseAddUpdateView: View {
 
 #Preview {
     ExcerciseAddUpdateView(exercise: Exercise())
+        .environmentObject(Globals.shared)
 }
