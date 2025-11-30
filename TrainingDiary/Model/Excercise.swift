@@ -63,11 +63,14 @@ extension ExerciseCategory {  // get name of icon for excercise
     }
 }
 
+extension ExerciseCategory: CaseIterable {}
+
 enum MuscleGroup: String, Codable {
     case chest      // Brust
     case shoulders  // Schulter
     case arms       // Arme
     case back       // Rücken
+    case abdominal  // Bauch
     case legs       // Beine
     case core       // Rumpf
     case body       // Ganzkörper
@@ -82,9 +85,12 @@ extension MuscleGroup {
         case .shoulders: return "Shoulders"
         case .core: return "Core"
         case .body: return "Body"
+        case .abdominal: return "Abdominal"
         }
     }
 }
+
+extension MuscleGroup: CaseIterable {}
 
 // Set within an excercise, used for exercise of category .gym
 struct Set: Identifiable, Codable {
@@ -126,10 +132,10 @@ struct Exercise: Identifiable, Codable {
     var end: Date                   // actual exercise end time
     var sets: [Set]                 // sets in excercise
     var duration: Duration          // planned duration, applicable to some categories like .warmup, .running, ...
-    var muscleGroups: [MuscleGroup] // muscle groups
+    var muscleGroup: MuscleGroup    // muscle group
     var isCompleted: Bool           // completion state
   
-    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60), muscleGroups: [MuscleGroup] = [], isCompleted: Bool = false) {
+    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60), muscleGroup: MuscleGroup = .body, isCompleted: Bool = false) {
         self.version = version
         self.id = id
         self.name = name
@@ -142,7 +148,7 @@ struct Exercise: Identifiable, Codable {
         self.end = end
         self.sets = sets
         self.duration = duration
-        self.muscleGroups = muscleGroups
+        self.muscleGroup = muscleGroup
         self.isCompleted = isCompleted
     }
     
@@ -191,7 +197,7 @@ struct Exercise: Identifiable, Codable {
     
 }
 
-extension ExerciseCategory: CaseIterable {}
+
 
 
 

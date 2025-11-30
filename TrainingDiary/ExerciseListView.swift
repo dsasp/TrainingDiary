@@ -55,7 +55,25 @@ struct ExerciseListView: View {
                                 HStack {
                                     Image(systemName: e.category.iconName)
                                         .font(.system(size: 20))
-                                    Text(e.name)
+                                        .frame(width: 35,alignment: .leading)
+                                    VStack(alignment: .leading) {
+                                        Text(e.name)
+                                            .fontWeight(.bold)
+                                        if e.category == .gym {
+                                            HStack {
+                                                Text("Muscle group: \(e.muscleGroup.displayName)")
+                                                Text("Sets: \(e.sets.count)")
+                                                Spacer()
+                                            }
+                                        } else {
+                                            HStack {
+                                                Text("Duration: \(hmsString(from: e.duration))")
+                                                Spacer()
+                                            }
+                                            
+                                        }
+                                    }
+                                    
                                 }
                             }
                             .onDelete(perform: deleteExercises)

@@ -29,7 +29,7 @@ struct ExcerciseAddUpdateView: View {
                 appBackground
                     .opacity(0.8).ignoresSafeArea()
                 
-                VStack(spacing: 10) {
+                VStack(spacing: 5) {
                     
                     HStack {
                         Text("General settings")
@@ -47,16 +47,29 @@ struct ExcerciseAddUpdateView: View {
                                 .padding()
                         }
                         
-                        LabeledContent("Category:") {
+                        HStack {
+                            Text("Category:").font(Font.headline)
+                            Spacer()
                             Picker("", selection: $exercise.category) {
                                 ForEach(ExerciseCategory.allCases, id: \.self) { category in
                                     Label(category.displayName, systemImage: category.iconName)
                                         .tag(category)
                                 }
                             }
-                            .frame(maxWidth: .infinity)
                             .pickerStyle(.menu)
-                            .padding()
+                        }
+                        
+                        if exercise.category == .gym {
+                            HStack {
+                                Text("Muscle group:").font(Font.headline)
+                                Spacer()
+                                Picker("", selection: $exercise.muscleGroup) {
+                                    ForEach(MuscleGroup.allCases, id: \.self) { mg in
+                                        Text("\(mg.displayName)")
+                                            .tag(mg)
+                                    }
+                                }
+                            }
                         }
                         
                         LabeledContent("Description:") {
@@ -106,7 +119,7 @@ struct ExcerciseAddUpdateView: View {
                                 LabeledContent("Reps:") {
                                     Stepper("\(repsCount)", value: $repsCount, in: 0...10)
                                         .font(.title2.bold())
-                                        .padding()
+                                        .padding(.trailing)
                                 }
                                 LabeledContent("Weight:") {
                                     HStack {
@@ -117,7 +130,7 @@ struct ExcerciseAddUpdateView: View {
                                             .keyboardType(.numberPad)
                                             .focused($kbFocus)
                                             .frame(width: 80)
-                                            .padding(.trailing)
+                                            .padding()
                                     }
                                 }
                                 
@@ -144,7 +157,7 @@ struct ExcerciseAddUpdateView: View {
                                     }
                                 },
                                 label: {
-                                    Text("Create sets").fontWeight(.bold)
+                                    Text("Add sets").fontWeight(.bold)
                                 })
                             .buttonStyle(.glass)
                             .disabled(setCount == 0)

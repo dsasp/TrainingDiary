@@ -192,3 +192,32 @@ let numberFormatter: NumberFormatter = {
     f.maximumFractionDigits = 1
     return f
 }()
+
+// Formatter to render duration value as h:m:s
+//
+// Usage: Text(hmsString(from: someDuration))
+//
+func hmsString(from duration: Duration) -> String {
+    let totalSeconds = Int(duration.components.seconds)
+    let formatter = DateComponentsFormatter()
+    formatter.allowedUnits = [.hour, .minute, .second]
+    formatter.unitsStyle = .positional
+    formatter.zeroFormattingBehavior = [.pad]
+    return formatter.string(from: TimeInterval(totalSeconds)) ?? "0:00"
+}
+
+
+
+
+/// Check if current device language is german (de).
+///
+/// - Returns: true if language is 'de', false otherwise
+func isLanguageDE() -> Bool {
+    let localeLang = Locale.current.language
+    if let lc = localeLang.languageCode?.identifier {
+        if lc.starts(with: "de") {
+            return true
+        }
+    }
+    return false
+}
