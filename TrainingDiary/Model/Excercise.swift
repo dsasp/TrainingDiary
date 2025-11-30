@@ -6,6 +6,11 @@
 //
 
 import Foundation
+import os.log
+
+
+let exLog = Logger(subsystem: logSubSystem,category: fileNameOf(#file))
+let globals = Globals.shared
 
 let exerciseVersion: Int = 1
 let setVersion: Int = 1
@@ -15,16 +20,47 @@ let exercisesFile = "Exercises.json"
 // Excercise icon name
 let imageExercise = "figure.strengthtraining.traditional"
 
-enum ExerciseCategory: Int, Codable {
-    case gym
-    case cardio
+
+enum ExerciseCategory: String, Codable {
+    case gym            // strenght training
+    case cardio         // cardio and endurance training
     case stretching
     case warmup
-//    case running
-//    case hiking
-//    case cycling
-//    case swimming
+    case cooldown
     var id: Self { self }
+}
+
+//enum ExcerciseCategoryIcon: String, Codable {
+//    case gym = "figure.strengthtraining.traditional"
+//    case cardio = "heart"
+//    case stetching = "figure.strengthtraining.functional"
+//    case warmup = "flame"
+//    case cooldown = "showflake"
+//    var id: Self { self }
+//}
+
+extension ExerciseCategory {  // get display name for exercise
+    var displayName: String {
+        switch self {
+        case .gym: return "Gym"
+        case .cardio: return "Cardio"
+        case .stretching: return "Stretching"
+        case .warmup: return "Warmup"
+        case .cooldown: return "Cooldown"
+        }
+    }
+}
+
+extension ExerciseCategory {  // get name of icon for excercise
+    var iconName: String {
+        switch self {
+        case .gym: return "figure.strengthtraining.traditional"
+        case .cardio: return "heart"
+        case .stretching: return "figure.strengthtraining.functional"
+        case .warmup: return "flame"
+        case .cooldown: return "snowflake"
+        }
+    }
 }
 
 enum MuscleGroup: String, Codable {
@@ -50,20 +86,6 @@ extension MuscleGroup {
     }
 }
 
-enum ExcerciseCategoryIcon: String, Codable {
-    case gym = "figure.strengthtraining.traditional"
-    case cardio = "heart"
-    case stetching = "figure.strengthtraining.functional"
-    case warmup = "flame"
-    case cooldown = "showflake"
-//    case running = "figure.run"
-//    case hiking = "figure.hiking"
-//    case cycling = "figure.outdoor.cycle"
-//    case swimming = "figure.pool.swim"
-    
-    var id: Self { self }
-}
-
 // Set within an excercise, used for exercise of category .gym
 struct Set: Identifiable, Codable {
     var version: Int
@@ -74,8 +96,9 @@ struct Set: Identifiable, Codable {
     var pause: Duration     // pause after set
     var isWarmup: Bool
     var isCoolDown: Bool    // for future use
+    var isCompleted: Bool
     
-    init(version: Int = setVersion, id: UUID = UUID(), weight: Double = 0, reps: Int = 1, notes: String = "", pause: Duration = .zero, isWarmup: Bool = false, isCoolDown: Bool = false) {
+    init(version: Int = setVersion, id: UUID = UUID(), weight: Double = 0, reps: Int = 1, notes: String = "", pause: Duration = .zero, isWarmup: Bool = false, isCoolDown: Bool = false, isCompleted: Bool = false) {
         self.version = version
         self.id = id
         self.weight = weight
@@ -84,6 +107,7 @@ struct Set: Identifiable, Codable {
         self.pause = pause
         self.isWarmup = isWarmup
         self.isCoolDown = isCoolDown
+        self.isCompleted = isCompleted
     }
 }
 
@@ -97,15 +121,15 @@ struct Exercise: Identifiable, Codable {
     var notes: String               // notes/remarks
     var device: String              // device used for exercise
     var category: ExerciseCategory  // category
-    var icon: ExcerciseCategoryIcon // icon
-    var image: String               // image
+    var image: String               // image, not used
     var start: Date                 // actual exercise start time
     var end: Date                   // actual exercise end time
     var sets: [Set]                 // sets in excercise
     var duration: Duration          // planned duration, applicable to some categories like .warmup, .running, ...
     var muscleGroups: [MuscleGroup] // muscle groups
+    var isCompleted: Bool           // completion state
   
-    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, icon: ExcerciseCategoryIcon = .gym ,image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60), muscleGroups: [MuscleGroup] = []) {
+    init(version: Int = exerciseVersion, id: UUID = UUID(), name: String = "", description: String = "", notes: String = "", device: String = "" , category: ExerciseCategory = .gym, image: String = "" , start: Date = Date.now, end: Date = Date.now, sets: [Set] = [], duration: Duration = .seconds(15*60), muscleGroups: [MuscleGroup] = [], isCompleted: Bool = false) {
         self.version = version
         self.id = id
         self.name = name
@@ -113,13 +137,13 @@ struct Exercise: Identifiable, Codable {
         self.notes = notes
         self.device = device
         self.category = category
-        self.icon = icon
         self.image = image
         self.start = start
         self.end = end
         self.sets = sets
         self.duration = duration
         self.muscleGroups = muscleGroups
+        self.isCompleted = isCompleted
     }
     
     mutating func startExcercise() {
@@ -129,38 +153,45 @@ struct Exercise: Identifiable, Codable {
     mutating func endExcercise() {
         self.end = Date.now
     }
+    
+    /// Save exercise to global exercise list and makes change persistent.
+    ///
+    /// If an exercise w/ same id already exists it list, it will be updated.
+    /// A new exercise is created if no matching id is found and appended to list.
+    /// - Parameter ex: excercise
+    func save() {
+        
+        var found = false
+        var indexFound = 0
+        
+        // find item with matching id
+        for i in 0..<globals.exerciseList.count {
+            if self.id == globals.exerciseList[i].id {
+                exLog.debug("save(): match for id=\(self.id,privacy: .public) at index \(i,privacy: .public)")
+                found = true
+                indexFound = i
+            }
+        }
+        
+        if found { // matching id, update global exerciseList
+            exLog.notice("save(): updating exercise \(self.name,privacy: .public), id=\(self.id,privacy: .public)")
+            globals.exerciseList.insert(self, at: indexFound)
+            globals.exerciseList.remove(at: indexFound+1)
+ 
+        } else {
+            exLog.notice("save(): appending new exercise \(self.name,privacy: .public), id=\(self.id,privacy: .public)")
+            globals.exerciseList.append(self)
+        }
+        
+        // sort list before saving
+        globals.sortExerciseList()
+        // make persistent
+        saveToAppSupportDir(filename:exercisesFile, data:globals.exerciseList)
+    }
+    
 }
 
 extension ExerciseCategory: CaseIterable {}
 
-extension ExerciseCategory {
-    var displayName: String {
-        switch self {
-        case .gym: return "Gym"
-        case .cardio: return "Cardio"
-        case .stretching: return "Stretching"
-        case .warmup: return "Warmup"
-//        case .running: return "Running"
-//        case .hiking: return "Hiking"
-//        case .cycling: return "Cycling"
-//        case .swimming: return "Swimming"
-       
-        }
-    }
-
-    var iconName: String {
-        switch self {
-        case .gym: return ExcerciseCategoryIcon.gym.rawValue
-        case .cardio: return ExcerciseCategoryIcon.cardio.rawValue
-        case .stretching: return ExcerciseCategoryIcon.stetching.rawValue
-        case .warmup: return ExcerciseCategoryIcon.warmup.rawValue
-//        case .running: return ExcerciseCategoryIcon.running.rawValue
-//        case .hiking: return ExcerciseCategoryIcon.hiking.rawValue
-//        case .cycling: return ExcerciseCategoryIcon.cycling.rawValue
-//        case .swimming: return ExcerciseCategoryIcon.swimming.rawValue
-        
-        }
-    }
-}
 
 

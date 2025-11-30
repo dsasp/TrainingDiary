@@ -1,5 +1,5 @@
 //
-//  WorkoutsView.swift
+//  WorkoutListView.swift
 //  TrainingDiary
 //
 //  Created by Dieter on 29.11.25.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WorkoutsView: View {
+struct WorkoutListView: View {
     
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var globals: Globals
@@ -40,7 +40,7 @@ struct WorkoutsView: View {
                         
                     } else {
                         HStack {
-                            Text("Workouts").font(Font.caption.bold())
+                            Text("Workout History").font(Font.caption.bold())
                             Spacer()
                         }
                         List {
@@ -84,6 +84,6 @@ struct WorkoutsView: View {
 }
 
 #Preview {
-    WorkoutsView()
+    WorkoutListView()
         .environmentObject(Globals.shared)
 }

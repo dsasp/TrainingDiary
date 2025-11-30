@@ -32,17 +32,25 @@ struct StartView: View {
                         .multilineTextAlignment(.center)
                         .padding(.leading, 20).padding(.trailing, 20).padding(.bottom, 30)
                     
-                    Button(action: {
-                        
-                        // TBD
-                        
-                    }, label: {
-                        
-                        Text("Start Workout")
-                            .font(.title).fontWeight(.semibold)
+                    
+                    NavigationLink(destination: WorkoutListView(), label: {
+                            Text("Start Workout").font(Font.title.bold())
                             .padding()
-                        
-                    }).buttonStyle(.glassProminent)
+                    })
+                    .buttonStyle(.glassProminent)
+                    
+                    
+//                    Button(action: {
+//                        
+//                        // TBD
+//                        
+//                    }, label: {
+//                        
+//                        Text("Start Workout")
+//                            .font(.title).fontWeight(.semibold)
+//                            .padding()
+//                        
+//                    }).buttonStyle(.glassProminent)
                     
                     Spacer()
                     
@@ -100,7 +108,7 @@ struct StartView: View {
                 .padding()
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
-                        NavigationLink(destination: ExcerciseAddUpdateView(exercise:e), label: {
+                        NavigationLink(destination: ExerciseListView(), label: {
                             VStack {
                                 Image(systemName: "figure.strengthtraining.traditional")
                                     .font(Font.title.bold())
@@ -122,7 +130,7 @@ struct StartView: View {
                         .glassEffect()
                     }
                     ToolbarItem(placement: .bottomBar) {
-                        NavigationLink(destination: WorkoutsView(), label: {
+                        NavigationLink(destination: WorkoutListView(), label: {
                             VStack {
                                 Image(systemName: "calendar")
                                     .font(Font.title.bold())
@@ -137,9 +145,9 @@ struct StartView: View {
                                label: {
                             VStack {
                                 Image(systemName: "gear")
+                                    .font(Font.title2.bold())
                             }
-                        }).buttonStyle(GlassButtonStyle())
-                        
+                        })
                     }
                 }
                 

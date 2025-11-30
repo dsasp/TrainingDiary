@@ -38,6 +38,14 @@ class Globals: ObservableObject {
             return[]
         }}()
     
+    /// Sort global exercise list by name.
+    ///
+    /// Sort is applied to in-memory copy of list only, i.e. is not persistent.
+    func sortExerciseList() {
+        let sorted = globals.exerciseList.sorted { (lhs, rhs) in return lhs.name < rhs.name }
+        globals.exerciseList = sorted
+    }
+    
     // Global list of workouts, persistemt in .json file
     @Published var workoutList: [Workout] = {
         globLog.notice("Try loading workouts, format version=\(workoutVersion)")

@@ -25,11 +25,12 @@ struct Workout: Identifiable, Codable {
     var start: Date
     var end: Date
     var exercises: [Exercise]
+    var isCompleted: Bool = false
     var isFavorite: Bool = false    // for future use
     var dataString: [String]        // for future use
     var dataInt: [Int]              // for future use
     
-    init(version: Int = workoutVersion, id: UUID = UUID(), name: String = "", iconName: String = imageWorkout, description: String = "", start: Date = Date.now, end: Date = Date.now, excercises: [Exercise] = [], isFavorite: Bool = false, dataString: [String] = [], dataInt: [Int] = []) {
+    init(version: Int = workoutVersion, id: UUID = UUID(), name: String = "", iconName: String = imageWorkout, description: String = "", start: Date = Date.now, end: Date = Date.now, excercises: [Exercise] = [], isCompleted: Bool = false, isFavorite: Bool = false, dataString: [String] = [], dataInt: [Int] = []) {
         self.version = version
         self.id = id
         self.name = name
@@ -38,6 +39,7 @@ struct Workout: Identifiable, Codable {
         self.start = start
         self.end = end
         self.exercises = excercises
+        self.isCompleted = isCompleted
         self.isFavorite = isFavorite
         self.dataString = dataString
         self.dataInt = dataInt

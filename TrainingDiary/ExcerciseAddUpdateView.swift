@@ -54,6 +54,7 @@ struct ExcerciseAddUpdateView: View {
                                         .tag(category)
                                 }
                             }
+                            .frame(maxWidth: .infinity)
                             .pickerStyle(.menu)
                             .padding()
                         }
@@ -74,7 +75,7 @@ struct ExcerciseAddUpdateView: View {
                         }
                     }
                     .font(.headline)
-                    .padding(.leading, 10)
+                    .padding(.leading, 5)
                     .glassEffect(.regular,in: .rect(cornerRadius: 20.0))
                     
                     
@@ -128,8 +129,6 @@ struct ExcerciseAddUpdateView: View {
                                 Text("Above settings are applied when creating sets. You can adjust settings for each set individually.")
                                     .font(.caption)
                                     .padding(.bottom, 10)
-                                
-                                
                                 
                             }
                             .font(.headline)
@@ -202,7 +201,6 @@ struct ExcerciseAddUpdateView: View {
             } // VStack
             .navigationTitle("Exercise")
             .navigationBarTitleDisplayMode(.inline)
-//            .navigationBarBackButtonHidden()
             .onAppear {
                 if exercise.category != .gym {
                     if exercise.duration == .zero {
@@ -218,22 +216,17 @@ struct ExcerciseAddUpdateView: View {
                            label: {Image(systemName: "keyboard.chevron.compact.down")
                     })
                 })
-//                ToolbarItem(placement: .topBarLeading) {
-//                    Button(
-//                        action: {
-//                            // TBD
-//                            dismiss()
-//                        },
-//                        label: {
-//                            Text("Cancel").fontWeight(.bold)
-//                        })
-//                }
-                
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(
+                    Button( // save
                         action: {
-                            // TBD
-                            // remember to delete sets if cat is othe than .gym when saving
+                            // remove sets if cat is other than .gym
+                            if exercise.category != .gym {
+                                if !exercise.sets.isEmpty {
+                                    exercise.sets.removeAll()
+                                }
+                            }
+                            exercise.save()
+                            dismiss()
                         },
                         label: {
                             Text("Save").fontWeight(.bold)
@@ -282,3 +275,4 @@ struct ExcerciseAddUpdateView: View {
     ExcerciseAddUpdateView(exercise: Exercise())
         .environmentObject(Globals.shared)
 }
+
